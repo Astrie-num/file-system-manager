@@ -10,10 +10,9 @@ async function fileManager(){
         const appendedContent = '\nThis is an appended line.';
         const directoryPath = './content';
 
+        let output = ' ';
 
         // Check if file exists before doing any other operations
-
-
         async function fileExists(filePath){
             try{
                 await readFile(filePath)
@@ -29,20 +28,20 @@ async function fileManager(){
 
         //Create first file
         await writeFile(firstFilePath, firstContent);
-        console.log("First file created successfully!");
+        output += "First file created successfully!<br>";
 
         // Create second file
         await writeFile(secondFilePath, secondContent);
-        console.log("Second file created successfully!");
+        output += "Second file created successfully!<br>";
 
         // Read first file 
         if(await fileExists(firstFilePath)){
 
             const firstResult = await readFile(firstFilePath, 'utf-8');
-            console.log(firstResult);
+            output += `Contents of the first file: ${firstResult}<br>`;
         }
         else{
-            console.log("First file does not exist");
+            output += "First file does not exist<br>";
         }
         
 
@@ -50,54 +49,57 @@ async function fileManager(){
         if(await fileExists(secondFilePath)) {
 
             const secondResult = await readFile(secondFilePath, 'utf-8');
-        console.log(secondResult);
+        output += `Contents of the second file ${secondResult}<br>`;
 
         }
         else{
-            console.log("Second file does not exist");
+            output += "Second file does not exist<br>";
         }
         
         
         // Append to first file 
         if(await fileExists(firstFilePath)){
             await appendFile(firstFilePath, appendedContent);
-            console.log("File appended successfully!");
+            output += "File appended successfully!<br>";
 
             //Read append results
             const updatedFirstResult = await readFile(firstFilePath, 'utf-8');
-            console.log("This is the result of appending: ", updatedFirstResult);
+            output += `This is the result of appending: ${updatedFirstResult}<br>`;
 
         }
         else{
-            console.log("Cannot append to a non-existent file");
+            output += "Cannot append to a non-existent file";
         }
         
         
         // List all files
         const files = await readdir(directoryPath);
-        console.log("All files present: ", files);
+        output += `All files present: ${files}<br>`;
 
 
         // Delete a file
         if(await fileExists(firstFilePath)){
 
             await unlink(firstFilePath);
-            console.log("File deleted successfully!");
+            output += "File deleted successfully!<br>";
         }
         else{
-            console.log("Cannot delete a non-existent file");
+            output += "Cannot delete a non-existent file";
         }
-        
-
+    
 
         // List files again
         const filesRemaining = await readdir(directoryPath);
-        console.log("Files present after deleting: ", filesRemaining);
+        output += `Files present after deleting: ${filesRemaining}<br>`;
+
+        return output;
 
     }
     catch(err){
         console.error(err);
+        return "An error occurred while processing the files.<br>";
     }
 }
 
-fileManager();
+
+module.exports = fileManager;
